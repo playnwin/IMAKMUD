@@ -1,35 +1,42 @@
-import sys
-from twisted.web.static import File
-from twisted.python import log
-from twisted.web.server import Site
-from twisted.internet import reactor
-
-from autobahn.twisted.websocket import WebSocketServerFactory, \
-    WebSocketServerProtocol
-
-from autobahn.twisted.resource import WebSocketResource
+from autobahn.twisted.websocket import WebSocketServerProtocol, \
+    WebSocketServerFactory
 
 
-class SomeServerProtocol(WebSocketServerProtocol):
+class MyServerProtocol(WebSocketServerProtocol):
+
     def onConnect(self, request):
-        print("some request connected {}".format(request))
+        print("Client connecting: {0}".format(request.peer))
+
+    def onOpen(self):
+        print("WebSocket connection open.")
 
     def onMessage(self, payload, isBinary):
-        self.sendMessage("message received")
+        if isBinary:
+            print("Binary message received: {0} bytes".format(len(payload)))
+        else:
+            print("Text message received: {0}".format(payload.decode('utf8')))
+
+        # echo back message verbatim
+        self.sendMessage(payload, isBinary)
+
+    def onClose(self, wasClean, code, reason):
+        print("WebSocket connection closed: {0}".format(reason))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
+
+    import sys
+
+    from twisted.python import log
+    from twisted.internet import reactor
+
     log.startLogging(sys.stdout)
 
-    # static file server seving index.html as root
-    root = File(".")
+    factory = WebSocketServerFactory(u"ws://127.0.0.1:9000")
+    factory.protocol = MyServerProtocol
+    # factory.setProtocolOptions(maxConnections=2)
 
-    factory = WebSocketServerFactory(u"ws://127.0.0.1:8080")
-    factory.protocol = SomeServerProtocol
-    resource = WebSocketResource(factory)
-    # websockets resource on "/ws" path
-    root.putChild(u"ws", resource)
+    # note to self: if using putChild, the child must be bytes...
 
-    site = Site(root)
-    reactor.listenTCP(8080, site)
+    reactor.listenTCP(9000, factory)
     reactor.run()
