@@ -19,7 +19,6 @@ class Room:
         for key, value in world.factory.clients.items():
             if value in activeplayers and value != name:
                 print("Alerting {}".format(value))
-                print(world.factory.clients[key])
                 world.factory.link[key].sendMessage("{} has entered {}.".format(name, self.name).encode('utf8'))
 
     def alert_exit(self, name):
@@ -27,5 +26,4 @@ class Room:
         for key, value in world.factory.clients.items():
             if value in activeplayers and value != name:
                 print("Alerting {}".format(value))
-                print(world.factory.clients[key])
                 world.factory.link[key].sendMessage("{} has left {}.".format(name, self.name).encode('utf8'))
