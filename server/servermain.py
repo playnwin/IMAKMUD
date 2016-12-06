@@ -2,7 +2,7 @@ import sys
 from autobahn.twisted.websocket import WebSocketServerFactory
 from twisted.python import log
 from twisted.internet import reactor
-from server import MUDProtocol
+from server.MUDProtocol import MUDProtocol
 
 def startServer():
     log.startLogging(sys.stdout)
