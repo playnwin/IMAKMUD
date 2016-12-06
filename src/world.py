@@ -1,2 +1,2 @@
-characters = []
-rooms = []
+characters = {}
+rooms = {}

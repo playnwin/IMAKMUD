@@ -16,17 +16,14 @@ def parse(text):
 
 def look(text):
     if len(text) == 0:
-        return "You are in {}. {}".format(world.rooms[0].name, world.rooms[0].desc)
+        return "You are in {}. {}".format(world.rooms["Jail Cell"].name, world.rooms["Jail Cell"].desc)
+        print(world.rooms["Jail Cell"])
     elif text[0] == "around":
-        return "You are in {}. {}".format(world.rooms[0].name, world.rooms[0].desc)
+        return "You are in {}. {}".format(world.rooms["Jail Cell"].name, world.rooms["Jail Cell"].desc)
     elif text[0] == "at":
-        if text[1] in (c.name for c in world.characters):
-            x = 0
-            for y in range(1, len(world.characters)):
-                if text[1] == world.characters[y].name:
-                    x = y
-                    break
-            return "You look at {}. {}".format(world.characters[x].name, world.characters[x].desc)
+        print(world.rooms["Jail Cell"].contains)
+        if text[1] in world.rooms["Jail Cell"].contains.keys():
+            return "You look at {}. {}".format(text[1], world.characters[text[1]].desc)
 
 
 def disp_help(text):
@@ -38,17 +35,15 @@ def disp_help(text):
 def login_username(text):
     if text[0] in world.factory.clients.values():
         return "That character is already logged in. Try another character."
-    elif text[0] not in (c.name for c in world.characters):
+    elif text[0] not in (c for c in world.characters.keys()):
         return "There is no character by that name. Try another name."
     else:
         return "Enter your password: "
 
+
 def login_password(text):
     name = world.factory.clients[text[0]]
-    password = next(x.password for x in world.characters if x.name == name)
-    print(name)
-    print(password)
-    print(text[1])
+    password = world.characters[name].password
     if text[1] == password:
         return "Logged in successfully!"
     else:
