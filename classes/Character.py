@@ -1,3 +1,5 @@
+from src import world
+
 class Character:
 
     def __init__(self, name = "", desc = "", location = ""):
@@ -17,3 +19,6 @@ class Player(Character):
 
     def is_player(self):
         return True
+
+    def say(self, text):
+        world.rooms[self.location].say(self.name, text)

@@ -14,6 +14,13 @@ class Room:
     def remove_entity(self, entity):
         del self.contains[entity.name]
 
+    def broadcast(self, name, text):
+        activeplayers = [x for x, y in self.contains.items() if y.is_player()]
+        for key, value in world.factory.clients.items():
+            if value in activeplayers:
+                print("Broadcasting to {}".format(value))
+                world.factory.link[key].sendMessage("{} says: {}".format(name, text).encode('utf8'))
+
     def alert_entrance(self, name):
         activeplayers = [x for x, y in self.contains.items() if y.is_player()]
         for key, value in world.factory.clients.items():

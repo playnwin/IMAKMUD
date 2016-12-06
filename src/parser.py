@@ -2,15 +2,17 @@ from src import world
 
 
 def parse(text):
-    text = text.split(" ")
-    if text[0] == "look":
-        return look(text[1:])
-    elif text[0] == "help":
-        return disp_help(text[1:])
-    elif text[0] == "login_u":
-        return login_username(text[1:])
-    elif text[0] == "login_p":
-        return login_password(text[1:])
+    texts = text.split(" ")
+    if texts[0] == "look":
+        return look(texts[1:])
+    elif texts[0] == "say":
+        return text
+    elif texts[0] == "help":
+        return disp_help(texts[1:])
+    elif texts[0] == "login_u":
+        return login_username(texts[1:])
+    elif texts[0] == "login_p":
+        return login_password(texts[1:])
     return "I couldn't understand that."
 
 

@@ -5,6 +5,7 @@ from src import world
 
 class MUDProtocol(WebSocketServerProtocol):
     query = ""
+    loc = ""
     name = "Unauthenticated User"
 
     def onConnect(self, request):
@@ -25,14 +26,17 @@ class MUDProtocol(WebSocketServerProtocol):
             self.name = payload.decode('utf8')
             self.factory.clients[self.peer] = self.name
             print("Client {} logging into {}".format(self.peer, self.name))
-        print("Making response to {}: {}".format(self.name, response))
-        self.sendMessage(response.encode("utf8"), False)
+        if response[0:3] == "say":
+            world.rooms[self.loc].broadcast(self.name, response[4:])
+        else:
+            print("Making response to {}: {}".format(self.name, response))
+            self.sendMessage(response.encode("utf8"), False)
         if response == "Logged in successfully!":
             self.query = ""
             self.sendMessage("Welcome back, {}.".format(self.name).encode("utf8"), False)
-            loc = world.players[self.name].location
-            world.rooms[loc].add_entity(world.players[self.name])
-            world.rooms[loc].alert_entrance(self.name)
+            self.loc = world.players[self.name].location
+            world.rooms[self.loc].add_entity(world.players[self.name])
+            world.rooms[self.loc].alert_entrance(self.name)
 
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed with {}: {0}".format(self.name, reason))
