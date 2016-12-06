@@ -39,7 +39,7 @@ class MUDProtocol(WebSocketServerProtocol):
             world.rooms[self.loc].alert_entrance(self.name)
 
     def onClose(self, wasClean, code, reason):
-        print("WebSocket connection closed with {}: {0}".format(self.name, reason))
+        print("WebSocket connection closed with {}: {}".format(self.name, reason))
 
     def connectionLost(self, reason):
         WebSocketServerProtocol.connectionLost(self, reason)
