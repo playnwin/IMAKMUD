@@ -5,7 +5,7 @@ from src import world
 
 class MUDProtocol(WebSocketServerProtocol):
     query = ""
-    name = ""
+    name = "Unauthenticated User"
 
     def onConnect(self, request):
         print("Client connecting: {0}".format(request.peer))
@@ -18,14 +18,14 @@ class MUDProtocol(WebSocketServerProtocol):
 
     def onMessage(self, payload, isBianary):
         message = "{}".format(self.query) + payload.decode('utf8')
-        print("Got message: {}".format(message))
+        print("Got message from {}: {}".format(self.name, message))
         response = parse(message)
         if response == "Enter your password: ":
             self.query = "login_p {} ".format(self.peer)
             self.name = payload.decode('utf8')
             self.factory.clients[self.peer] = self.name
             print("Client {} logging into {}".format(self.peer, self.name))
-        print("Making response: {}".format(response))
+        print("Making response to {}: {}".format(self.name, response))
         self.sendMessage(response.encode("utf8"), False)
         if response == "Logged in successfully!":
             self.query = ""
@@ -35,7 +35,7 @@ class MUDProtocol(WebSocketServerProtocol):
             world.rooms[loc].alert_entrance(self.name)
 
     def onClose(self, wasClean, code, reason):
-        print("WebSocket connection closed: {0}".format(reason))
+        print("WebSocket connection closed with {}: {0}".format(self.name, reason))
 
     def connectionLost(self, reason):
         WebSocketServerProtocol.connectionLost(self, reason)
