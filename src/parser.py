@@ -41,7 +41,7 @@ def login(text):
                 x = y
                 break
         if text[1] == world.characters[x].password:
-            return "Login successful. Welcome back, {}".format(world.characters[x].name)
+            return "Login successful. Welcome back, {}.".format(world.characters[x].name)
         else:
             return "Login unsuccessful. Have a nice day."
     else:
