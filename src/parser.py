@@ -15,21 +15,24 @@ def parse(text):
 
 
 def look(text):
+    for x in range(0, len(text)):
+        if text[x] in ["around", "at", "for", "room"]:
+            del text[x]
     if len(text) == 0:
-        return "You are in {}. {}".format(world.rooms["Jail Cell"].name, world.rooms["Jail Cell"].desc)
-        print(world.rooms["Jail Cell"])
-    elif text[0] == "around":
-        return "You are in {}. {}".format(world.rooms["Jail Cell"].name, world.rooms["Jail Cell"].desc)
-    elif text[0] == "at":
-        print(world.rooms["Jail Cell"].contains)
+
+        return "You are in {}. {} In the room you see: {}".format(world.rooms["Jail Cell"].name,
+                                                              world.rooms["Jail Cell"].desc,
+                                                              world.rooms["Jail Cell"].contains.keys())
+    else:
         if text[1] in world.rooms["Jail Cell"].contains.keys():
             return "You look at {}. {}".format(text[1], world.characters[text[1]].desc)
+        else:
+            return "You don't see {}.".format(text[1])
 
 
 def disp_help(text):
     if len(text) == 0:
-        return "Currently, you can [look around] or you can [look at] something. Probably Joe. " \
-               "Nothing else has been added."
+        return "Currently, you can look at things. There's not much to see."
 
 
 def login_username(text):
@@ -48,27 +51,3 @@ def login_password(text):
         return "Logged in successfully!"
     else:
         return "Incorrect password."
-
-
-
-
-
-
-
-
-
-
-    """
-    if text[0] in (c.name for c in world.characters):
-        x = 0
-        for y in range(1, len(world.characters)):
-            if text[0] == world.characters[y].name:
-                x = y
-                break
-        if text[1] == world.characters[x].password:
-            return "Login successful. Welcome back, {}.".format(world.characters[x].name)
-        else:
-            return "Login unsuccessful. Have a nice day."
-    else:
-        return "I couldn't find a character by that name."
-    """
