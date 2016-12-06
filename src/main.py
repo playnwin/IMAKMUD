@@ -4,6 +4,6 @@ from classes.Character import Character
 from classes.Room import Room
 
 if __name__ == '__main__':
-    world.characters.append(Character("Joe", "A generic dude"))
-    world.rooms.append(Room("Jail Cell", "There's no way our"))
+    world.characters.append(Character("Joe", "A generic dude."))
+    world.rooms.append(Room("Jail Cell", "There's no way out. There's a guy named Joe next to you."))
     servermain.startServer()

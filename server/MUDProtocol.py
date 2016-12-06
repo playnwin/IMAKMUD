@@ -16,7 +16,10 @@ class MUDProtocol(WebSocketServerProtocol):
             print("Text message received: {0}".format(payload.decode('utf8')))
 
         # echo back message verbatim
-        self.sendMessage(parse(payload), isBinary)
-
+        message = payload.decode('utf8')
+        print("Got message: {}".format(message))
+        response = parse(message)
+        print("Making response: {}".format(response))
+        self.sendMessage(response.encode("utf8"), isBinary)
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
