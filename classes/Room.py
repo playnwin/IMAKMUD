@@ -5,14 +5,14 @@ class Room:
         self.desc = desc
         self.contains = []
 
-    def setName(self, name):
+    def set_name(self, name):
         self.name = name
 
-    def setDesc(self, desc):
+    def set_desc(self, desc):
         self.desc = desc
 
-    def addEntity(self, entity):
+    def add_entity(self, entity):
         self.contains.append(entity)
 
-    def removeEntity(self, entity):
+    def remove_entity(self, entity):
         self.contains.remove(entity)

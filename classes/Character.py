@@ -1,13 +1,15 @@
 class Character:
-    name = ""
-    desc = ""
 
-    def __init__(self, name = None, desc = None):
+    def __init__(self, name = None, desc = None, password=None):
         self.name = name
         self.desc = desc
+        self.password = password
 
-    def setName(self, name):
+    def set_name(self, name):
         self.name = name
 
-    def setDesc(self, desc):
+    def set_desc(self, desc):
         self.desc = desc
+
+    def set_password(self, password):
+        self.password = password

@@ -4,7 +4,7 @@ from twisted.python import log
 from twisted.internet import reactor
 from server.MUDProtocol import MUDProtocol
 
-def startServer():
+def start_server():
     log.startLogging(sys.stdout)
     factory = WebSocketServerFactory(u"ws://127.0.0.1:9000")
     factory.protocol = MUDProtocol
