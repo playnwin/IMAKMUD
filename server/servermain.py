@@ -2,11 +2,13 @@ import sys
 from autobahn.twisted.websocket import WebSocketServerFactory
 from twisted.python import log
 from twisted.internet import reactor
-from server.MUDProtocol import MUDProtocol
+from server.MUDServer import MUDProtocol, MUDServerFactory
+from src import world
+
 
 def start_server():
     log.startLogging(sys.stdout)
-    factory = WebSocketServerFactory(u"ws://127.0.0.1:9000")
-    factory.protocol = MUDProtocol
-    reactor.listenTCP(9000, factory)
+    world.factory = MUDServerFactory(u"ws://127.0.0.1:9000")
+    world.factory.protocol = MUDProtocol
+    reactor.listenTCP(9000, world.factory)
     reactor.run()
