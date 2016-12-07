@@ -2,8 +2,8 @@ from server import servermain
 from src import world
 from classes.Character import Character, Player
 from classes.Room import Room
-from classes.Item import Item, Consumable
 from items.Potions import Potions
+from items.Armors import Armors
 
 if __name__ == '__main__':
     world.players["Stefan"] = Player("Stefan", "The Main Character of this story.", "1234", "Jail Cell")
@@ -25,4 +25,10 @@ if __name__ == '__main__':
 
     world.items["potionBear"] = Potions.potionBearItem
     world.rooms["Jail Cell"].add_item(world.items["potionBear"])
+
+    world.items["armorIronChest"] = Armors.armorIronChestItem
+    world.rooms["Jail Cell"].add_item(world.items["armorIronChest"])
+
+    world.items["armorRobeChest"] = Armors.armorRobeChestItem
+    world.rooms["Jail Cell"].add_item(world.items["armorRobeChest"])
     servermain.start_server()

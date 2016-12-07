@@ -8,13 +8,21 @@ def parse(protocol, text):
     elif texts[0] == "go":
         go(protocol, texts[1:])
     elif texts[0] == "say":
-        say(protocol, text[3:])
+        say(protocol, texts[1:])
     elif texts[0] == "take":
-        take(protocol, text[5:])
-    elif texts[0] == "i":
-        look_inventory(protocol, text[2:])
+        take(protocol, texts[1:])
+    elif texts[0] == "i" or texts[0] == "inventory":
+        look_inventory(protocol, texts[1:])
+    elif texts[0] == "s" or texts[0] == "stats":
+        get_stats(protocol, texts[1:])
+    elif texts[0] == "equip":
+        equip(protocol, texts[1:])
+    elif texts[0] == "unequip":
+        unequip(protocol, texts[1:])
+    elif texts[0] == "think":
+        think(protocol, texts[1:])
     elif texts[0] == "use":
-        use_item(protocol, text[4:])
+        use_item(protocol, texts[1:])
     elif texts[0] == "help":
         disp_help(protocol, texts[1:])
     elif texts[0] == "login_u":
@@ -79,27 +87,60 @@ def go(protocol, text):
 
 
 def say(protocol, text):
-    world.rooms[world.players[protocol.name].location].broadcast(protocol.name, text)
+    world.players[protocol.name].say(text)
+
 
 def take(protocol, text):
-    if text in world.rooms[world.players[protocol.name].location].items:
-        world.players[protocol.name].add_item(world.items[text])
+    if text[0] in world.rooms[world.players[protocol.name].location].items:
+        world.players[protocol.name].add_item(world.items[text[0]])
+        world.rooms[world.players[protocol.name].location].remove_item(world.items[text[0]])
     else:
         protocol.sendMessage("I don't see that item.".encode("utf8"))
 
+
 def look_inventory(protocol, text):
-    if text == "":
-        items = "You have: \n"
+    if len(text) == 0:
+        items = "Equipped: \n"
+        for a in world.players[protocol.name].equipped.values():
+            if a is not None:
+                items += a.name + "\n"
+        items += "You have: \n"
         for a in world.players[protocol.name].items.values():
-            items += a.name
+            items += a.name + "\n"
         protocol.sendMessage(items.encode("utf8"))
     else:
-        if text in world.players[protocol.name].items:
-            protocol.sendMessage((world.players[protocol.name].items[text].desc).encode("utf8"))
+        if text[0] in world.players[protocol.name].items:
+            protocol.sendMessage(world.players[protocol.name].items[text[0]].desc.encode("utf8"))
+        if text[0] in [x.id for x in world.players[protocol.name].equipped.values() if x is not None]:
+            protocol.sendMessage(world.players[protocol.name].equipped[world.items[text[0]].slot].desc.encode("utf8"))
+
 
 def use_item(protocol, text):
     if text in world.players[protocol.name].items:
-        world.players[protocol.name].items[text].consume(protocol.name)
+        world.players[protocol.name].items[text].use(character = protocol.name)
+    else:
+        protocol.sendMessage("You can't use an item you don't have.".encode("utf8"))
+
+def equip(protocol, text):
+    if text[0] in world.items.keys():
+        world.players[protocol.name].equip(world.items[text[0]])
+    else:
+        world.players[protocol.name].think("I can't equip that item.")
+
+def unequip(protocol, text):
+    if text[0] in world.items.keys():
+        world.players[protocol.name].unequip(world.items[text[0]])
+    else:
+        world.players[protocol.name].think("I can't unequip that item.")
+
+def get_stats(protocol, text):
+    stats = "Stats:\n"
+    for k, v in world.players[protocol.name].stats.items():
+        stats+= str(k) + " - " + str(v) + "\n"
+    protocol.sendMessage(stats.encode("utf8"))
+
+def think(protocol, text):
+    world.players[protocol.name].think(text[0])
 
 def disp_help(protocol, text):
     if len(text) == 0:
