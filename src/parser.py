@@ -8,7 +8,7 @@ def parse(protocol, text):
     elif texts[0] == "go":
         go(protocol, texts[1:])
     elif texts[0] == "say":
-        say(protocol, texts[1:])
+        say(protocol, text[3:])
     elif texts[0] == "help":
         disp_help(protocol, texts[1:])
     elif texts[0] == "login_u":
@@ -28,8 +28,8 @@ def look(protocol, text):
                                                                                 world.rooms[world.players[protocol.name].location].desc,
                                                                                 world.rooms[world.players[protocol.name].location].contains.keys()).encode("utf8"))
     else:
-        if text[0] in world.rooms["Jail Cell"].contains.keys():
-            protocol.sendMessage("print You look at {}. {}".format(text[0], world.rooms["Jail Cell"].contains[text[0]].desc).encode("utf8"))
+        if text[0] in world.rooms[world.players[protocol.name].location].contains.keys():
+            protocol.sendMessage("You look at {}. {}".format(text[0], world.rooms[world.players[protocol.name].location].contains[text[0]].desc).encode("utf8"))
         else:
             protocol.sendMessage("You don't see {}.".format(text[0]).encode('utf8'))
 
