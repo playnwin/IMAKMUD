@@ -10,6 +10,13 @@ if __name__ == '__main__':
     world.players["Elijah"] = Player("Elijah", "Bears, bears, bears.", "1234", "Jail Cell")
     world.players["Alex"] = Player("Alex", "Who knows?", "1234", "Jail Cell")
     world.characters["Joe"] = Character("Joe", "A generic dude.", "Jail Cell")
-    world.rooms["Jail Cell"] = Room("Jail Cell", "There's no way out.")
+    world.characters["Guard Alex"] = Character("Guard Alex", "The man standing guard outside your jail cell. "
+                                                             "He's asleep.")
+    world.rooms["Jail Cell"] = Room("Jail Cell", "There's an open bar door leading into a stone hallway to "
+                                                 "the North.")
+    world.rooms["Jail Cell"].define_surroundings(north="Stone Hallway")
+    world.rooms["Stone Hallway"] = Room("Stone Hallway", "You're at the end of a stone hallway, North of a door "
+                                                         "to a jail cell")
+    world.rooms["Stone Hallway"].define_surroundings(south="Jail Cell")
     world.rooms["Jail Cell"].add_entity(world.characters["Joe"])
     servermain.start_server()

@@ -10,6 +10,13 @@ class Character:
     def is_player(self):
         return False
 
+    def change_room(self, new_room):
+        world.rooms[self.location].remove_entity(self)
+        world.rooms[self.location].alert_exit(self.name)
+        world.rooms[new_room].add_entity(self)
+        world.rooms[new_room].alert_entrance(self.name)
+        self.location = new_room
+
 
 class Player(Character):
 

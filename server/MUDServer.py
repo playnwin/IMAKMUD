@@ -20,23 +20,42 @@ class MUDProtocol(WebSocketServerProtocol):
     def onMessage(self, payload, isBianary):
         message = "{}".format(self.query) + payload.decode('utf8')
         print("Got message from {}: {}".format(self.name, message))
-        response = parse(message)
+        parse(self, message)
+        """
+        if response[0:5] == "print":
+            response = response[6:]
+            print("Making response to {}: {}".format(self.name, response))
+            self.sendMessage(response.encode("utf8"), False)
+        if response[0:2] == "go":
+            if response[3] == "N":
+                if world.rooms[world.players[self.name].location].north != "":
+                    dest_room = world.rooms[world.players[self.name].location].north
+            elif response[3] == "E":
+                if world.rooms[world.players[self.name].location].east != "":
+                    dest_room = world.rooms[world.players[self.name].location].east
+            elif response[3] == "S":
+                if world.rooms[world.players[self.name].location].south != "":
+                    dest_room = world.rooms[world.players[self.name].location].south
+            elif response[3] == "W":
+                if world.rooms[world.players[self.name].location].west != "":
+                    dest_room = world.rooms[world.players[self.name].location].west
+            else:
+                self.sendMessage("You can't go that way.".encode("utf8"), False)
+            world.players[self.name].change_room(dest_room)
         if response == "Enter your password: ":
             self.query = "login_p {} ".format(self.peer)
             self.name = payload.decode('utf8')
             self.factory.clients[self.peer] = self.name
             print("Client {} logging into {}".format(self.peer, self.name))
-        if response[0:3] == "say":
-            world.rooms[self.loc].broadcast(self.name, response[4:])
-        else:
-            print("Making response to {}: {}".format(self.name, response))
-            self.sendMessage(response.encode("utf8"), False)
         if response == "Logged in successfully!":
             self.query = ""
             self.sendMessage("Welcome back, {}.".format(self.name).encode("utf8"), False)
             self.loc = world.players[self.name].location
             world.rooms[self.loc].add_entity(world.players[self.name])
             world.rooms[self.loc].alert_entrance(self.name)
+        if response[0:3] == "say":
+            world.rooms[self.loc].broadcast(self.name, response[4:])
+        """
 
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed with {}: {}".format(self.name, reason))

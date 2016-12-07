@@ -7,12 +7,22 @@ class Room:
         self.name = name
         self.desc = desc
         self.contains = {}
+        self.north = ""
+        self.east = ""
+        self.south = ""
+        self.west = ""
 
     def add_entity(self, entity):
         self.contains[entity.name] = entity
 
     def remove_entity(self, entity):
         del self.contains[entity.name]
+
+    def define_surroundings(self, north="", east="", south="", west=""):
+        self.north = north
+        self.east = east
+        self.south = south
+        self.west = west
 
     def broadcast(self, name, text):
         activeplayers = [x for x, y in self.contains.items() if y.is_player()]
