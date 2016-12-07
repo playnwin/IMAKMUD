@@ -1,31 +1,50 @@
 from src import world
 
+commandAliases = {'look' : ['look'], 'go' : ['go', 'walk', 'to'], 'say':['say', 's'], 'think' : ['think'],
+                  'whisper' : ['whisper', 'w'], 'take': ['take', 'get'], 'inventory' : ['inventory', 'i'],
+                  'stats' : ['stats'], 'equip' : ['equip', 'e'], 'unequip' : ['unequip'], 'use' : ['use'],
+                  'help' : ['help']}
+
+commandDescriptions = {'look':'USAGE: look (object)\nAllows you to look at the room or something specific.',
+                       'go':'USAGE: go [direction]\nMoves you in the given direction.',
+                       'say':'USAGE: say [text]\nSays the given text.',
+                       'think':'USAGE: think [text]\nThinks about text.',
+                       'whisper':'USAGE: whisper [player]\nTells the player text.',
+                       'take':'USAGE: take [item]\nTakes the item from the ground.',
+                       'inventory':'USAGE: inventory (item)\nLooks inside the player inventory\n' +
+                       'or look at an item in the inventory.',
+                       'stats':'USAGE: stats\nTells you your current stats.',
+                       'equip':'USAGE: equip [item]\nEquips the given item.',
+                       'unequip':'USAGE: unequip [item]\nUnequips the given item.',
+                       'use':'USAGE: use [item]\nUses the given item.',
+                       'help':'USAGE: help (command)\nLists available commands or lists\n' +
+                       'the usage and description of a command.'}
 
 def parse(protocol, text):
     texts = text.split(" ")
-    if texts[0].lower() in ["look"]:
+    if texts[0].lower() in commandAliases['look']:
         look(protocol, texts[1:])
-    elif texts[0].lower() in ["go", "walk", "to"]:
+    elif texts[0].lower() in commandAliases['go']:
         go(protocol, texts[1:])
-    elif texts[0].lower() in ["s", "say"]:
+    elif texts[0].lower() in commandAliases['say']:
         say(protocol, texts[1:])
-    elif texts[0].lower() in ["think"]:
+    elif texts[0].lower() in commandAliases['think']:
         think(protocol, texts[1:])
-    elif texts[0].lower() in ["w", "whisper"]:
+    elif texts[0].lower() in commandAliases['whisper']:
         whisper(protocol, texts[1:])
-    elif texts[0].lower() in ["take", "get"]:
+    elif texts[0].lower() in commandAliases['take']:
         take(protocol, texts[1:])
-    elif texts[0].lower() in ["i", "inventory"]:
+    elif texts[0].lower() in commandAliases['inventory']:
         look_inventory(protocol, texts[1:])
-    elif texts[0].lower() in ["stats"]:
+    elif texts[0].lower() in commandAliases['stats']:
         get_stats(protocol, texts[1:])
-    elif texts[0].lower() in ["equip"]:
+    elif texts[0].lower() in commandAliases['equip']:
         equip(protocol, texts[1:])
-    elif texts[0].lower() in ["unequip"]:
+    elif texts[0].lower() in commandAliases['unequip']:
         unequip(protocol, texts[1:])
-    elif texts[0].lower() in ["use"]:
+    elif texts[0].lower() in commandAliases['use']:
         use_item(protocol, texts[1:])
-    elif texts[0].lower() in ["help"]:
+    elif texts[0].lower() in commandAliases['help']:
         disp_help(protocol, texts[1:])
     elif texts[0] == "login_u":
         login_username(protocol, texts[1:])
@@ -157,9 +176,17 @@ def get_stats(protocol, text):
         stats+= str(k) + " - " + str(v) + "\n"
     protocol.sendMessage(stats.encode("utf8"))
 
+
 def disp_help(protocol, text):
     if len(text) == 0:
-        protocol.sendMessage("Currently, you can [look] at things. There's not much to see.".encode("utf8"))
+        toPrint = "Commands:\n"
+        for k, v in commandDescriptions.items():
+            toPrint += "{} - {}".format(k, v) + "\n"
+        protocol.sendMessage(toPrint.encode("utf8"))
+    else:
+        if text[0].lower() in commandDescriptions.keys():
+            toPrint = text[0] + " - " + commandDescriptions[text[0]]
+            protocol.sendMessage(toPrint.encode("utf8"))
 
 
 def login_username(protocol, text):
