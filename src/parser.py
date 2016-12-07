@@ -45,10 +45,12 @@ def look(protocol, text):
                                                                                 world.rooms[world.players[protocol.name].location].contains.keys(),
                                                                                 world.rooms[world.players[protocol.name].location].items.keys()).encode("utf8"))
     else:
-        if (text[0] in world.rooms[world.players[protocol.name].location].contains.keys()) or (text[0] in world.rooms[world.players[protocol.name].location].items.keys()):
+        if text[0] in world.rooms[world.players[protocol.name].location].contains.keys():
             protocol.sendMessage("You look at {}. {}".format(text[0], world.rooms[world.players[protocol.name].location].contains[text[0]].desc).encode("utf8"))
         elif " ".join(text) in world.rooms[world.players[protocol.name].location].contains.keys():
             protocol.sendMessage("You look at {}. {}".format(" ".join(text), world.rooms[world.players[protocol.name].location].contains[" ".join(text)].desc).encode("utf8"))
+        elif " ".join(text) in world.rooms[world.players[protocol.name].location].items.keys():
+            protocol.sendMessage("You look at {}. {}".format(text[0], world.rooms[world.players[protocol.name].location].items[" ".join(text)].desc).encode("utf8"))
         else:
             protocol.sendMessage("You don't see {}.".format(text[0]).encode('utf8'))
 
