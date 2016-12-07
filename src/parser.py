@@ -9,6 +9,12 @@ def parse(protocol, text):
         go(protocol, texts[1:])
     elif texts[0] == "say":
         say(protocol, text[3:])
+    elif texts[0] == "take":
+        take(protocol, text[5:])
+    elif texts[0] == "i":
+        look_inventory(protocol, text[2:])
+    elif texts[0] == "use":
+        use_item(protocol, text[4:])
     elif texts[0] == "help":
         disp_help(protocol, texts[1:])
     elif texts[0] == "login_u":
@@ -24,11 +30,12 @@ def look(protocol, text):
         if text[x] in ["around", "at", "for", "room"]:
             del text[x]
     if len(text) == 0:
-        protocol.sendMessage("You are in {}. {} In the room you see: {}".format(world.rooms[world.players[protocol.name].location].name,
+        protocol.sendMessage("You are in {}. {} In the room you see: {}{}".format(world.rooms[world.players[protocol.name].location].name,
                                                                                 world.rooms[world.players[protocol.name].location].desc,
-                                                                                world.rooms[world.players[protocol.name].location].contains.keys()).encode("utf8"))
+                                                                                world.rooms[world.players[protocol.name].location].contains.keys(),
+                                                                                world.rooms[world.players[protocol.name].location].items.keys()).encode("utf8"))
     else:
-        if text[0] in world.rooms[world.players[protocol.name].location].contains.keys():
+        if (text[0] in world.rooms[world.players[protocol.name].location].contains.keys()) or (text[0] in world.rooms[world.players[protocol.name].location].items.keys()):
             protocol.sendMessage("You look at {}. {}".format(text[0], world.rooms[world.players[protocol.name].location].contains[text[0]].desc).encode("utf8"))
         else:
             protocol.sendMessage("You don't see {}.".format(text[0]).encode('utf8'))
@@ -74,10 +81,29 @@ def go(protocol, text):
 def say(protocol, text):
     world.rooms[world.players[protocol.name].location].broadcast(protocol.name, text)
 
+def take(protocol, text):
+    if text in world.rooms[world.players[protocol.name].location].items:
+        world.players[protocol.name].add_item(world.items[text])
+    else:
+        protocol.sendMessage("I don't see that item.".encode("utf8"))
+
+def look_inventory(protocol, text):
+    if text == "":
+        items = "You have: \n"
+        for a in world.players[protocol.name].items.values():
+            items += a.name
+        protocol.sendMessage(items.encode("utf8"))
+    else:
+        if text in world.players[protocol.name].items:
+            protocol.sendMessage((world.players[protocol.name].items[text].desc).encode("utf8"))
+
+def use_item(protocol, text):
+    if text in world.players[protocol.name].items:
+        world.players[protocol.name].items[text].consume(protocol.name)
 
 def disp_help(protocol, text):
     if len(text) == 0:
-        protocol.sendMessage("Currently, you can [look} at things. There's not much to see.".encode("utf8"))
+        protocol.sendMessage("Currently, you can [look] at things. There's not much to see.".encode("utf8"))
 
 
 def login_username(protocol, text):

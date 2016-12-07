@@ -6,6 +6,7 @@ class Character:
         self.name = name
         self.desc = desc
         self.location = location
+        self.items = {}
 
     def is_player(self):
         return False
@@ -17,6 +18,8 @@ class Character:
         world.rooms[new_room].alert_entrance(self.name)
         self.location = new_room
 
+    def add_item(self, item):
+        self.items[item.id] = item
 
 class Player(Character):
 

@@ -11,12 +11,19 @@ class Room:
         self.east = ""
         self.south = ""
         self.west = ""
+        self.items = {}
 
     def add_entity(self, entity):
         self.contains[entity.name] = entity
 
+    def add_item(self, item):
+        self.items[item.id] = item
+
     def remove_entity(self, entity):
         del self.contains[entity.name]
+
+    def remove_item(self, item):
+        del self.items[item.id]
 
     def define_surroundings(self, north="", east="", south="", west=""):
         self.north = north

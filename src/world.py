@@ -1,3 +1,4 @@
 players = {}
 characters = {}
 rooms = {}
+items = {}
