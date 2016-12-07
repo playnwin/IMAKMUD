@@ -5,7 +5,7 @@ from classes.Room import Room
 
 if __name__ == '__main__':
     world.players["Stefan"] = Player("Stefan", "The Main Character of this story.", "1234", "Jail Cell")
-    world.players["Michael"] = Player("Michael", "Creator of StefansFace.com. Also, Stefan's Sidekick.", "1234", "Jail Cell")
+    world.players["Michael"] = Player("Michael", "Creator of StefansFace.com.", "1234", "Jail Cell")
     world.players["Colby"] = Player("Colby", "A literal god.", "1234", "Jail Cell")
     world.players["Elijah"] = Player("Elijah", "Bears, bears, bears.", "1234", "Jail Cell")
     world.players["Alex"] = Player("Alex", "Who knows?", "1234", "Jail Cell")
@@ -19,4 +19,5 @@ if __name__ == '__main__':
                                                          "to a jail cell")
     world.rooms["Stone Hallway"].define_surroundings(south="Jail Cell")
     world.rooms["Jail Cell"].add_entity(world.characters["Joe"])
+    world.rooms["Stone Hallway"].add_entity(world.characters["Guard Alex"])
     servermain.start_server()
