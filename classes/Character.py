@@ -11,8 +11,8 @@ class Character:
         self.equipped = {'head': None, 'neck': None, 'chest': None, 'back': None, 'hands': None,
                          'legs': None, 'feet': None, 'ring1': None, 'ring2': None, 'misc1': None, 'misc2': None,
                          'misc3': None, 'mainHand': None, 'offHand': None}
-        self.unmodifiedstats = {'dr' : 0, 'hp' : 100}
-        self.stats = {'dr' : 0, 'hp' : 100}
+        self.unmodifiedstats = {'dr' : 0, 'hp' : 100, 'accuracy' : 20}
+        self.stats = {'dr' : 0, 'hp' : 100, 'accuracy' : 20}
 
     def is_player(self):
         return False
@@ -34,34 +34,98 @@ class Character:
         self.stats = dict(self.unmodifiedstats)
         for a in self.equipped.values():
             if a is not None:
-                for b in a.statChange.keys():
-                    self.stats[b] += a.statChange[b]
+                if type(a) is Armor:
+                    for b in a.statChange.keys():
+                        self.stats[b] += a.statChange[b]
+                elif type(a) is Weapon:
+                    if a.slot == "oneHand":
+                        for b in a.statChange.keys():
+                            self.stats[b] += a.statChange[b]
+                    elif a.slot == "twoHand":
+                        for b in a.statChange.keys():
+                            self.stats[b] += (a.statChange[b] // 2)
 
     def equip(self, item):
-        if item.id in self.items.keys():
-            if self.equipped[item.slot] is None:
-                if item.onEquip is not None:
-                    item.onEquip(self)
-                self.equipped[item.slot] = item
-                del self.items[item.id]
+        if type(item) is Armor:
+            if item.id in self.items.keys():
+                if self.equipped[item.slot] is None:
+                    if item.onEquip is not None:
+                        item.onEquip(self)
+                    self.equipped[item.slot] = item
+                    del self.items[item.id]
+                    self.update_stats()
+                else:
+                    if type(self) is Player:
+                        self.think("I'm already wearing something there.")
+            else:
+                if type(self) is Player:
+                    self.think("I can't equip something I don't have.")
+        elif type(item) is Weapon:
+            if item.id in self.items.keys():
+                if item.slot=="oneHand":
+                    if self.equipped['mainHand'] is None:
+                        if item.onEquip is not None:
+                            item.onEquip(self)
+                        self.equipped['mainHand'] = item
+                        del self.items[item.id]
+                        self.update_stats()
+                    elif self.equipped['offHand'] is None:
+                        if item.onEquip is not None:
+                            item.onEquip(self)
+                        self.equipped['offHand'] = item
+                        del self.items[item.id]
+                        self.update_stats()
+                    else:
+                        if type(self) is Player:
+                            self.think("I'm already wearing something there.")
+                elif item.slot=="twoHand":
+                    if self.equipped['mainHand'] is None and self.equipped['offHand'] is None:
+                        if item.onEquip is not None:
+                            item.onEquip(self)
+                        self.equipped['mainHand'] = item
+                        self.equipped['offHand'] = item
+                        del self.items[item.id]
+                        self.update_stats()
+                    else:
+                        if type(self) is Player:
+                            self.think("I'm already wearing something there.")
+            else:
+                if type(self) is Player:
+                    self.think("I can't equip something I don't have.")
+
+    def unequip(self, item):
+        if type(item) is Armor:
+            if self.equipped[item.slot].id is item.id:
+                if item.onUnequip is not None:
+                    item.onUnequip(self)
+                self.items[item.id] = item
+                self.equipped[item.slot] = None
                 self.update_stats()
             else:
                 if type(self) is Player:
-                    self.think("I'm already wearing something there.")
-        else:
-            if type(self) is Player:
-                self.think("I can't equip something I don't have.")
-
-    def unequip(self, item):
-        if self.equipped[item.slot].id is item.id:
-            if item.onUnequip is not None:
-                item.onUnequip(self)
-            self.items[item.id] = item
-            self.equipped[item.slot] = None
-            self.update_stats()
-        else:
-            if type(self) is Player:
-                self.think("I'm not wearing that item.")
+                    self.think("I'm not wearing that item.")
+        elif type(item) is Weapon:
+            if item.slot == "oneHand":
+                if self.equipped['offHand'] is not None and self.equipped['offHand'].id is item.id:
+                    if item.onUnequip is not None:
+                        item.onUnequip(self)
+                    self.items[item.id] = item
+                    self.equipped['offHand'] = None
+                    self.update_stats()
+                elif self.equipped['mainHand'].id is item.id:
+                    if item.onUnequip is not None:
+                        item.onUnequip(self)
+                    self.items[item.id] = item
+                    self.equipped['mainHand'] = None
+                    self.update_stats()
+            elif item.slot == "twoHand":
+                if self.equipped['mainHand'].id is item.id:
+                    if item.onUnequip is not None:
+                        item.onUnequip(self)
+                    self.items[item.id] = item
+                    self.equipped['mainHand'] = None
+                    self.equipped['offHand'] = None
+                    self.update_stats()
 
 class Player(Character):
     def __init__(self, name="", desc="", password="", location=""):

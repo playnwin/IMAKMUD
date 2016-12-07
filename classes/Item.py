@@ -36,6 +36,7 @@ class Armor(Equippable):
         self.statChange = statChange
         self.onHitEffect = onHitEffect
 
+
 class Weapon(Equippable):
     def __init__(self, id="", name="", desc="", slot=None, equip=None, unequip=None, statChange={}, onHitEffect=None):
         Equippable.__init__(self, id, name, desc, slot, equip, unequip)

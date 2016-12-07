@@ -3,27 +3,29 @@ from src import world
 
 def parse(protocol, text):
     texts = text.split(" ")
-    if texts[0] == "look":
+    if texts[0].lower() in ["look"]:
         look(protocol, texts[1:])
-    elif texts[0] == "go":
+    elif texts[0].lower() in ["go", "walk", "to"]:
         go(protocol, texts[1:])
-    elif texts[0] == "say":
+    elif texts[0].lower() in ["s", "say"]:
         say(protocol, texts[1:])
-    elif texts[0] == "take":
-        take(protocol, texts[1:])
-    elif texts[0] == "i" or texts[0] == "inventory":
-        look_inventory(protocol, texts[1:])
-    elif texts[0] == "s" or texts[0] == "stats":
-        get_stats(protocol, texts[1:])
-    elif texts[0] == "equip":
-        equip(protocol, texts[1:])
-    elif texts[0] == "unequip":
-        unequip(protocol, texts[1:])
-    elif texts[0] == "think":
+    elif texts[0].lower() in ["think"]:
         think(protocol, texts[1:])
-    elif texts[0] == "use":
+    elif texts[0].lower() in ["w", "whisper"]:
+        whisper(protocol, texts[1:])
+    elif texts[0].lower() in ["take", "get"]:
+        take(protocol, texts[1:])
+    elif texts[0].lower() in ["i", "inventory"]:
+        look_inventory(protocol, texts[1:])
+    elif texts[0].lower() in ["stats"]:
+        get_stats(protocol, texts[1:])
+    elif texts[0].lower() in ["equip"]:
+        equip(protocol, texts[1:])
+    elif texts[0].lower() in ["unequip"]:
+        unequip(protocol, texts[1:])
+    elif texts[0].lower() in ["use"]:
         use_item(protocol, texts[1:])
-    elif texts[0] == "help":
+    elif texts[0].lower() in ["help"]:
         disp_help(protocol, texts[1:])
     elif texts[0] == "login_u":
         login_username(protocol, texts[1:])
@@ -90,6 +92,14 @@ def say(protocol, text):
     world.players[protocol.name].say(text)
 
 
+def think(protocol, text):
+    world.players[protocol.name].think(text[0])
+
+
+def whisper(protocol, text):
+    world.players[text[0]].think("{} whispers to you: {}".format(world.players[protocol.name].name, " ".join(text[1:])))
+
+
 def take(protocol, text):
     if text[0] in world.rooms[world.players[protocol.name].location].items:
         world.players[protocol.name].add_item(world.items[text[0]])
@@ -103,7 +113,11 @@ def look_inventory(protocol, text):
         items = "Equipped: \n"
         for a in world.players[protocol.name].equipped.values():
             if a is not None:
-                items += a.name + "\n"
+                if a.slot is not "twoHand":
+                    items += a.name + "\n"
+                else:
+                    if a.name not in items:
+                        items += a.name + "\n"
         items += "You have: \n"
         for a in world.players[protocol.name].items.values():
             items += a.name + "\n"
@@ -138,9 +152,6 @@ def get_stats(protocol, text):
     for k, v in world.players[protocol.name].stats.items():
         stats+= str(k) + " - " + str(v) + "\n"
     protocol.sendMessage(stats.encode("utf8"))
-
-def think(protocol, text):
-    world.players[protocol.name].think(text[0])
 
 def disp_help(protocol, text):
     if len(text) == 0:
