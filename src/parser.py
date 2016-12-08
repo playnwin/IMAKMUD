@@ -27,7 +27,7 @@ def parse(protocol, text):
     elif texts[0].lower() in commandAliases['go']:
         go(protocol, texts[1:])
     elif texts[0].lower() in commandAliases['say']:
-        say(protocol, texts[1:])
+        say(protocol, text[4:])
     elif texts[0].lower() in commandAliases['think']:
         think(protocol, texts[1:])
     elif texts[0].lower() in commandAliases['whisper']:
