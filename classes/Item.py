@@ -7,19 +7,18 @@ class Item:
         self.name = name
         self.desc = desc
 
-    def use(self, **kwargs):
-        if type(self) is Consumable:
-            self.consume(**kwargs)
-
 
 class Consumable(Item):
     def __init__(self, id="", name="", desc="", effect=None):
         Item.__init__(self, id, name, desc)
         self.effect = effect
 
-    def consume(self, **kwargs):
-        self.effect(kwargs.get('character'))
-        del world.players[kwargs.get('character')].items[self.id]
+    def use(self, character):
+        self.consume(character)
+
+    def consume(self, character):
+        self.effect(character)
+        del world.players[character].items[self.id]
 
 
 class Equippable(Item):
