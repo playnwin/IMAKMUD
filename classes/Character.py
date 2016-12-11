@@ -149,11 +149,11 @@ class Player(Character):
     def __init__(self, name="", desc="", password="", location=""):
         Character.__init__(self, name, desc, location)
         self.password = password
-        self.items = {}
+        self.items = []
         self.equipped = {'head': None, 'neck': None, 'chest': None, 'back': None, 'hands': None,
                          'legs': None, 'feet': None, 'ring1': None, 'ring2': None, 'misc1': None, 'misc2': None,
                          'misc3': None, 'mainHand': None, 'offHand': None}
-        self.stats = {"health": 100, "mana": 100, "strength": 10, "agility": 10, "spellcasting: 10"}
+        self.stats = {"health": 100, "mana": 100, "strength": 10, "agility": 10, "spellcasting": 10}
 
     def is_player(self):
         return True
@@ -176,3 +176,19 @@ class Player(Character):
         for k,v in world.factory.clients.items():
             if self.name == v:
                 world.factory.link[k].sendMessage(text.encode("utf8"))
+
+    def equip(self, item):
+        if self.equipped[item.slot] is None:
+            self.think("You equipped {}.".format(item.name))
+            self.equipped[item.slot] = item
+            self.items.remove(item)
+        else:
+            self.think("You switched {} for {}.".format(self.equipped[item.slot].name, item.name))
+            self.items.append(self.equipped[item.slot])
+            self.items[item.slot] = item
+            self.items.remove(item)
+
+    def unequip(self, item):
+        self.think("You unequipped {}.".format(item.name))
+        self.items.append(item)
+        self.equipped[item.slot] = None

@@ -56,7 +56,7 @@ class Armor(Equippable):
         self.armor_type = armor_type
 
     def on_equip(self):
-
+        pass
 
 class Weapon(Equippable):
     def __init__(self, id="", name="", desc="", slot=None, damage=0, weapon_type="", accuracy=0):
@@ -66,4 +66,4 @@ class Weapon(Equippable):
         self.accuracy = accuracy
 
     def on_equip(self):
-
+        pass
