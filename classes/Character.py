@@ -189,7 +189,14 @@ class Player(Character):
         else:
             self.think("You switched {} for {}.".format(self.equipped[item.slot].name, item.name))
             self.items.append(self.equipped[item.slot])
-            self.items[item.slot] = item
+            if self.equipped[item.slot] == "twoHand":
+                self.equipped["mainHand"] = None
+                self.equipped["offHand"] = None
+            if item.slot == "twoHand":
+                self.equipped["mainHand"] = item
+                self.equipped["offHand"] = item
+            else:
+                self.equipped[item.slot] = item
             self.items.remove(item)
 
     def unequip(self, item):
