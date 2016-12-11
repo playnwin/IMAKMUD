@@ -177,7 +177,6 @@ def equip(protocol, text):
 
 
 def unequip(protocol, text):
-    print(world.players[protocol.name].equipped.values())
     if text[0] == next(filter(lambda i: i is not None and i.id == text[0], world.players[protocol.name].equipped.values())).id:
         world.players[protocol.name].unequip(
             next(filter(lambda i: i is not None and i.id == text[0], world.players[protocol.name].equipped.values())))
