@@ -1,24 +1,25 @@
 from src import world
 
-commandAliases = {'look' : ['look'], 'go' : ['go', 'walk', 'to'], 'say':['say', 's'], 'think' : ['think'],
-                  'whisper' : ['whisper', 'w'], 'take': ['take', 'get'], 'inventory' : ['inventory', 'i'],
-                  'stats' : ['stats'], 'equip' : ['equip', 'e'], 'unequip' : ['unequip'], 'use' : ['use'],
-                  'help' : ['help']}
+commandAliases = {'look': ['look'], 'go': ['go', 'walk', 'to'], 'say': ['say', 's'], 'think': ['think'],
+                  'whisper': ['whisper', 'w'], 'take': ['take', 'get'], 'inventory': ['inventory', 'i'],
+                  'stats': ['stats'], 'equip': ['equip', 'e'], 'unequip': ['unequip'], 'use': ['use'],
+                  'help': ['help']}
 
-commandDescriptions = {'look':'USAGE: look (object)\nAllows you to look at the room or something specific.',
-                       'go':'USAGE: go [direction]\nMoves you in the given direction.',
-                       'say':'USAGE: say [text]\nSays the given text.',
-                       'think':'USAGE: think [text]\nThinks about text.',
-                       'whisper':'USAGE: whisper [player]\nTells the player text.',
-                       'take':'USAGE: take [item]\nTakes the item from the ground.',
-                       'inventory':'USAGE: inventory (item)\nLooks inside the player inventory\n' +
-                       'or look at an item in the inventory.',
-                       'stats':'USAGE: stats\nTells you your current stats.',
-                       'equip':'USAGE: equip [item]\nEquips the given item.',
-                       'unequip':'USAGE: unequip [item]\nUnequips the given item.',
-                       'use':'USAGE: use [item]\nUses the given item.',
-                       'help':'USAGE: help (command)\nLists available commands or lists\n' +
-                       'the usage and description of a command.'}
+commandDescriptions = {'look': 'USAGE: look (object)\nAllows you to look at the room or something specific.',
+                       'go': 'USAGE: go [direction]\nMoves you in the given direction.',
+                       'say': 'USAGE: say [text]\nSays the given text.',
+                       'think': 'USAGE: think [text]\nThinks about text.',
+                       'whisper': 'USAGE: whisper [player]\nTells the player text.',
+                       'take': 'USAGE: take [item]\nTakes the item from the ground.',
+                       'inventory': 'USAGE: inventory (item)\nLooks inside the player inventory\n' +
+                                    'or look at an item in the inventory.',
+                       'stats': 'USAGE: stats\nTells you your current stats.',
+                       'equip': 'USAGE: equip [item]\nEquips the given item.',
+                       'unequip': 'USAGE: unequip [item]\nUnequips the given item.',
+                       'use': 'USAGE: use [item]\nUses the given item.',
+                       'help': 'USAGE: help (command)\nLists available commands or lists\n' +
+                               'the usage and description of a command.'}
+
 
 def parse(protocol, text):
     texts = text.split(" ")
@@ -55,21 +56,26 @@ def parse(protocol, text):
 
 
 def look(protocol, text):
-    for x in range(0, len(text)-1):
+    for x in range(0, len(text) - 1):
         if text[x] in ["around", "at", "for", "room"]:
             del text[x]
     if len(text) == 0:
-        protocol.sendMessage("You are in {}. {} In the room you see: {}{}".format(world.rooms[world.players[protocol.name].location].name,
-                                                                                world.rooms[world.players[protocol.name].location].desc,
-                                                                                world.rooms[world.players[protocol.name].location].contains.keys(),
-                                                                                world.rooms[world.players[protocol.name].location].items.keys()).encode("utf8"))
+        protocol.sendMessage("You are in {}. {} In the room you see: {}{}".format(
+            world.rooms[world.players[protocol.name].location].name,
+            world.rooms[world.players[protocol.name].location].desc,
+            world.rooms[world.players[protocol.name].location].contains.keys(),
+            world.rooms[world.players[protocol.name].location].items.keys()).encode("utf8"))
     else:
         if text[0] in world.rooms[world.players[protocol.name].location].contains.keys():
-            protocol.sendMessage("You look at {}. {}".format(text[0], world.rooms[world.players[protocol.name].location].contains[text[0]].desc).encode("utf8"))
+            protocol.sendMessage("You look at {}. {}".format(text[0], world.rooms[
+                world.players[protocol.name].location].contains[text[0]].desc).encode("utf8"))
         elif " ".join(text) in world.rooms[world.players[protocol.name].location].contains.keys():
-            protocol.sendMessage("You look at {}. {}".format(" ".join(text), world.rooms[world.players[protocol.name].location].contains[" ".join(text)].desc).encode("utf8"))
+            protocol.sendMessage("You look at {}. {}".format(" ".join(text), world.rooms[
+                world.players[protocol.name].location].contains[" ".join(text)].desc).encode("utf8"))
         elif " ".join(text) in world.rooms[world.players[protocol.name].location].items.keys():
-            protocol.sendMessage("You look at {}. {}".format(text[0], world.rooms[world.players[protocol.name].location].items[" ".join(text)].desc).encode("utf8"))
+            protocol.sendMessage("You look at {}. {}".format(text[0],
+                                                             world.rooms[world.players[protocol.name].location].items[
+                                                                 " ".join(text)].desc).encode("utf8"))
         else:
             protocol.sendMessage("You don't see {}.".format(text[0]).encode('utf8'))
 
@@ -78,33 +84,37 @@ def go(protocol, text):
     if text[0][0] == "N":
         if world.rooms[world.players[protocol.name].location].north != "":
             world.players[protocol.name].change_room(world.rooms[world.players[protocol.name].location].north)
-            protocol.sendMessage("You go North into {}. {}".format(world.rooms[world.players[protocol.name].location].name,
-                                                                  world.rooms[world.players[protocol.name].location].desc)
-                                                                  .encode("utf8"))
+            protocol.sendMessage(
+                "You go North into {}. {}".format(world.rooms[world.players[protocol.name].location].name,
+                                                  world.rooms[world.players[protocol.name].location].desc)
+                .encode("utf8"))
         else:
             protocol.sendMessage("You can't go that way.".encode("utf8"))
     elif text[0][0] == "E":
         if world.rooms[world.players[protocol.name].location].east != "":
             world.players[protocol.name].change_room(world.rooms[world.players[protocol.name].location].east)
-            protocol.sendMessage("You go East into {}. {}".format(world.rooms[world.players[protocol.name].location].name,
-                                                                  world.rooms[world.players[protocol.name].location].desc)
-                                                                  .encode("utf8"))
+            protocol.sendMessage(
+                "You go East into {}. {}".format(world.rooms[world.players[protocol.name].location].name,
+                                                 world.rooms[world.players[protocol.name].location].desc)
+                .encode("utf8"))
         else:
             protocol.sendMessage("You can't go that way.".encode("utf8"))
     elif text[0][0] == "S":
         if world.rooms[world.players[protocol.name].location].south != "":
             world.players[protocol.name].change_room(world.rooms[world.players[protocol.name].location].south)
-            protocol.sendMessage("You go South into {}. {}".format(world.rooms[world.players[protocol.name].location].name,
-                                                                  world.rooms[world.players[protocol.name].location].desc)
-                                                                  .encode("utf8"))
+            protocol.sendMessage(
+                "You go South into {}. {}".format(world.rooms[world.players[protocol.name].location].name,
+                                                  world.rooms[world.players[protocol.name].location].desc)
+                .encode("utf8"))
         else:
             protocol.sendMessage("You can't go that way.".encode("utf8"))
     elif text[0][0] == "W":
         if world.rooms[world.players[protocol.name].location].west != "":
             world.players[protocol.name].change_room(world.rooms[world.players[protocol.name].location].west)
-            protocol.sendMessage("You go West into {}. {}".format(world.rooms[world.players[protocol.name].location].name,
-                                                                  world.rooms[world.players[protocol.name].location].desc)
-                                                                  .encode("utf8"))
+            protocol.sendMessage(
+                "You go West into {}. {}".format(world.rooms[world.players[protocol.name].location].name,
+                                                 world.rooms[world.players[protocol.name].location].desc)
+                .encode("utf8"))
         else:
             protocol.sendMessage("You can't go that way.".encode("utf8"))
     else:
@@ -154,26 +164,31 @@ def look_inventory(protocol, text):
 
 def use_item(protocol, text):
     if text in world.players[protocol.name].items:
-        world.players[protocol.name].items[text].use(character = protocol.name)
+        world.players[protocol.name].items[text].use(character=protocol.name)
     else:
         protocol.sendMessage("You can't use an item you don't have.".encode("utf8"))
 
+
 def equip(protocol, text):
-    if text[0] in world.items.keys():
-        world.players[protocol.name].equip(world.items[text[0]])
+    if text[0] == next(filter(lambda i: i.id == text[0], world.players[protocol.name].items)).id:
+        world.players[protocol.name].equip(next(filter(lambda i: i.id == text[0], world.players[protocol.name].items)))
     else:
-        world.players[protocol.name].think("I can't equip that item.")
+        world.players[protocol.name].think("I don't have that item")
+
 
 def unequip(protocol, text):
-    if text[0] in world.items.keys():
-        world.players[protocol.name].unequip(world.items[text[0]])
+    print(world.players[protocol.name].equipped.values())
+    if text[0] == next(filter(lambda i: i is not None and i.id == text[0], world.players[protocol.name].equipped.values())).id:
+        world.players[protocol.name].unequip(
+            next(filter(lambda i: i is not None and i.id == text[0], world.players[protocol.name].equipped.values())))
     else:
         world.players[protocol.name].think("I can't unequip that item.")
+
 
 def get_stats(protocol, text):
     stats = "Stats:\n"
     for k, v in world.players[protocol.name].stats.items():
-        stats+= str(k) + " - " + str(v) + "\n"
+        stats += str(k) + " - " + str(v) + "\n"
     protocol.sendMessage(stats.encode("utf8"))
 
 
