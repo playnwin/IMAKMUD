@@ -21,6 +21,7 @@ class Consumable(Item):
         del world.players[character].items[self.id]
 
 """
+Elijah's Code
 class Equippable(Item):
     def __init__(self, id="", name="", desc="", slot=None,equip=None, unequip=None):
         Item.__init__(self, id, name, desc)

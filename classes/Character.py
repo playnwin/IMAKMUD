@@ -12,7 +12,8 @@ class Character:
 
     def is_player(self):
         return False
-
+"""
+Elijah's Code
     def update_stats(self):
         self.stats = dict(self.unmodifiedstats)
         for a in self.equipped.values():
@@ -142,7 +143,7 @@ class Player(Character):
         for k,v in world.factory.clients.items():
             if self.name == v:
                 world.factory.link[k].sendMessage(text.encode("utf8"))
-"""
+
 
 class Player(Character):
     def __init__(self, name="", desc="", password="", location=""):
