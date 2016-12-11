@@ -142,7 +142,7 @@ def look_inventory(protocol, text):
                     if a.name not in items:
                         items += a.name + "\n"
         items += "You have: \n"
-        for a in world.players[protocol.name].items.values():
+        for a in world.players[protocol.name].items:
             items += a.name + "\n"
         protocol.sendMessage(items.encode("utf8"))
     else:

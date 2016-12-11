@@ -166,7 +166,7 @@ class Player(Character):
         self.location = new_room
 
     def add_item(self, item):
-        self.items[item.id] = item
+        self.items.append(item)
 
     def say(self, text):
         world.rooms[self.location].broadcast(self.name, text)
@@ -178,9 +178,13 @@ class Player(Character):
                 world.factory.link[k].sendMessage(text.encode("utf8"))
 
     def equip(self, item):
-        if self.equipped[item.slot] is None:
+        if item.slot == "twoHand" or self.equipped[item.slot] is None:
             self.think("You equipped {}.".format(item.name))
-            self.equipped[item.slot] = item
+            if item.slot == "twoHand":
+                self.equipped["mainHand"] = item
+                self.equipped["offHand"] = item
+            else:
+                self.equipped[item.slot] = item
             self.items.remove(item)
         else:
             self.think("You switched {} for {}.".format(self.equipped[item.slot].name, item.name))
@@ -191,4 +195,8 @@ class Player(Character):
     def unequip(self, item):
         self.think("You unequipped {}.".format(item.name))
         self.items.append(item)
-        self.equipped[item.slot] = None
+        if item.slot == "twoHand":
+            self.equipped["mainHand"] = None
+            self.equipped["offHand"] = None
+        else:
+            self.equipped[item.slot] = None
